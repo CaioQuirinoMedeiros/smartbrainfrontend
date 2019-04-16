@@ -1,14 +1,194 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #000;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/******************** APP ********************/
+.App {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
 }
+
+/******************** REUSABLE ********************/
+.wrapper {
+  width: 100%;
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
+}
+
+/******************** PARTICLES ********************/
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+/******************** NAVIGATION ********************/
+.nav {
+  color: #f1f1f1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+  .logo_box {
+    margin: 10px 0 10px 20px;
+  }
+    .logo_box img {
+      width: 60px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .rotate {
+      transform: rotate(360deg);
+    }
+  .nav_nav {
+    margin-right: 20px;
+  }
+    .nav_list {
+      list-style: none;
+      display: flex;
+    }
+      .nav_list li {
+        padding: 0 15px;
+      }
+        .nav_list li span {
+          cursor: pointer;
+          font-size: 120%;
+          font-weight: 400;
+        }
+
+/******************** HOME FORM ********************/
+.input_box {
+  background: rgba(240, 240, 240, 0.95);
+  color: #222;
+  border-radius: 5px;
+  text-align: center;
+  margin: 30px 10px;
+  box-shadow: 2px 2px 15px 2px #000;
+}
+  .input_box p {
+    font-size: 140%;
+    padding: 5px 15px;
+  }
+  .input_wrapper {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+    .input_text {
+      outline: none;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      width: 50%
+    }
+    .input_button {
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #DD8800;
+      color: #fff;
+      cursor: pointer;
+      font-size: 100%;
+      text-transform: uppercase;
+      margin-left: 15px;
+    }
+
+/******************** FACE RECOGNITION IMG ********************/
+.face-recognition {
+  width: 100%;
+  text-align: center;
+}
+  .face_box {
+    margin-top: 30px;
+    position: relative;
+    display: inline-block;
+  }
+    .face_box img {
+      width: 200px;
+    }
+
+.bounding-box {
+  position: absolute;
+  cursor: pointer;
+  border: 2px solid slateblue;
+}
+
+/******************** SIGN-IN E REGISTER ********************/
+.form_signin {
+  width: 350px;
+  background: rgba(240, 240, 240, 0.95);
+  color: #222;
+  text-align: center;
+  padding: 30px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 0;
+}
+  .form_legend {
+    font-size: 180%;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+  .input-signin_wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5px;
+  }
+    .input-signin_wrapper label {
+      text-align: left;
+      margin-bottom: 5px;
+    }
+    .input-signin_wrapper input {
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 100%;
+    }
+    .input-signin_wrapper input[type='submit'] {
+      cursor: pointer;
+      background-color: #ee8800;
+      color: #fff;
+      width: 40%;
+      margin: 0 auto;
+      transition: all 0.3s;
+    }
+    .input-signin_wrapper input[type='submit']:hover {
+      transform: scale(1.05);
+    }
+    .input-signin_wrapper span {
+      cursor: pointer;
+      color: #ee8800;
+    }
+
+.rank {
+  margin-top: 20px;
+}
+  .rank_text {
+    color: #fff;
+    font-size: 150%;
+  }
+  .rank_num {
+
+  }
