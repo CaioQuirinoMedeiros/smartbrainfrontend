@@ -1,4 +1,5 @@
 import React from 'react';
+import { backendUrl } from '../App';
 
 class Register extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class Register extends React.Component {
 
     onSubmitRegister = () => {
         if (!(Object.values(this.state).indexOf('') === -1)) return
-        fetch('https://evening-coast-16509.herokuapp.com/register',
+        fetch(`${backendUrl}/register`,
         {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },

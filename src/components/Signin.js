@@ -1,4 +1,5 @@
 import React from 'react';
+import { backendUrl } from '../App';
 
 class Signin extends React.Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class Signin extends React.Component {
 
     onSubmitSignIn = () => {
         if (!(Object.values(this.state).indexOf('') === -1)) return
-        fetch('https://evening-coast-16509.herokuapp.com/signin',
+        fetch(`${backendUrl}/signin`,
         {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },

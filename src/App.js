@@ -8,6 +8,8 @@ import FaceRecognition from './components/FaceRecognition'
 import Particles from 'react-particles-js';
 import { particlesConfig } from './particlesjs-config';
 
+export const backendUrl = 'https://smartbrainbackend.herokuapp.com';
+
  // Estado inicial do app
  const initialState = {
   input: '',
@@ -24,7 +26,7 @@ import { particlesConfig } from './particlesjs-config';
   }
  }
 
-class App extends Component {
+export class App extends Component {
   constructor() {
     super();
     this.state = initialState;
@@ -82,7 +84,7 @@ class App extends Component {
     this.setState({imageUrl: this.state.input});
 
     //  chamando a promise da api com o modelo de detecção de face
-    fetch('https://evening-coast-16509.herokuapp.com/imageurl', {
+    fetch(`${backendUrl}/imageurl`, {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -92,7 +94,7 @@ class App extends Component {
     .then(response => response.json())
     .then(response => {
       if (response) {
-        fetch('https://evening-coast-16509.herokuapp.com/image', {
+        fetch(`${backendUrl}/image`, {
           method: 'put',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -135,5 +137,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;
