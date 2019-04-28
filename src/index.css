@@ -27,6 +27,10 @@ body {
   align-items: inherit;
 }
 
+button {
+  outline: none
+}
+
 /******************** PARTICLES ********************/
 .particles {
   position: fixed;
@@ -88,7 +92,7 @@ body {
   .input_wrapper {
     margin: 20px 0;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly
   }
     .input_text {
       outline: none;
@@ -106,7 +110,6 @@ body {
       cursor: pointer;
       font-size: 100%;
       text-transform: uppercase;
-      margin-left: 15px;
     }
 
 /******************** FACE RECOGNITION IMG ********************/
