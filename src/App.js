@@ -9,7 +9,6 @@ import Particles from "react-particles-js";
 import { particlesConfig } from "./particlesjs-config";
 
 export const backendUrl = 'https://smartbrainbackend.herokuapp.com';
-// export const backendUrl = "http://localhost:3001";
 
 // Estado inicial do app
 const initialState = {
@@ -78,7 +77,6 @@ export class App extends Component {
 
   onBtnClear = e => {
     document.querySelector(".input_text").value = "";
-    console.log(e);
   };
 
   onInputChange = event => {
