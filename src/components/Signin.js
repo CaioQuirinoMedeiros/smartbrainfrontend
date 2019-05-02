@@ -56,7 +56,7 @@ class Signin extends React.Component {
         }
       })
       .catch(error => {
-        this.setState({ loginFailed: true, error: error });
+        this.setState({ loginFailed: true, error: 'Login failed' });
       });
   };
 
