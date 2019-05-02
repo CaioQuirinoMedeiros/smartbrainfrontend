@@ -7,16 +7,14 @@ import ImageLinkForm from "./components/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition";
 import Particles from "react-particles-js";
 import { particlesConfig } from "./particlesjs-config";
+import { base_url } from "./config/baseUrl";
 
-export const backendUrl = 'https://smartbrainbackend.herokuapp.com';
-
-// Estado inicial do app
 const initialState = {
-  input: "",
+  error: false,
+  inputUrl: "",
   imageUrl: "",
   boxes: [],
   route: "signin",
-  isSignedIn: false,
   user: {
     id: "",
     name: "",
@@ -32,8 +30,20 @@ export class App extends Component {
     this.state = initialState;
   }
 
-  loadUser = userData => {
-    this.setState({
+  componentDidMount = () => {
+    const storage = localStorage.getItem("user");
+    console.log("Storage no compMount: ", storage);
+
+    if (storage) {
+      this.loadUser(JSON.parse(storage));
+      console.log("Chamando loadUser passando a data: ", storage);
+    }
+  };
+
+  loadUser = async userData => {
+    console.log("loadUser iniciando recebendo a data: ", userData);
+    await this.setState({
+      route: "home",
       user: {
         id: userData.id,
         name: userData.name,
@@ -42,6 +52,14 @@ export class App extends Component {
         joined: userData.joined
       }
     });
+    console.log("State after set state do loadUser: ", this.state.user);
+
+    this.saveUser();
+  };
+
+  saveUser = () => {
+    localStorage.setItem("user", JSON.stringify(this.state.user));
+    console.log("Salvando no storage o user: ", this.state.user);
   };
 
   calculateFaceLocation = data => {
@@ -68,71 +86,104 @@ export class App extends Component {
       };
     });
 
-    return boxes;
-  };
-
-  displayFaceBox = boxes => {
     this.setState({ boxes: boxes });
   };
 
   onBtnClear = e => {
     document.querySelector(".input_text").value = "";
+    this.setState({ inputUrl: "", imageUrl: "", boxes: [], error: false });
   };
 
   onInputChange = event => {
-    this.setState({ input: event.target.value });
+    this.setState({
+      inputUrl: event.target.value,
+      imageUrl: event.target.value,
+      boxes: [],
+      error: false
+    });
   };
 
-  onSubmit = () => {
-    // atualizando a url no state
-    this.setState({ imageUrl: this.state.input });
+  onSubmit = async e => {
+    e.preventDefault();
+
+    if (!this.state.inputUrl) {
+      return;
+    }
+
+    this.setState({ error: false });
 
     //  chamando a promise da api com o modelo de detecção de face
-    fetch(`${backendUrl}/imageurl`, {
+    console.log(this.state.imageUrl);
+    fetch(`${base_url}/image`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        input: this.state.input
+        input: this.state.inputUrl
       })
     })
-      .then(response => response.json())
       .then(response => {
-        if (response) {
-          fetch(`${backendUrl}/image`, {
-            method: "put",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              id: this.state.user.id
-            })
-          })
-            .then(response => response.json())
-            .then(count => {
-              this.setState({ user: { ...this.state.user, entries: count } });
-            })
-            .catch(err => console.log(err));
-        }
-        this.displayFaceBox(this.calculateFaceLocation(response));
+        console.log("1ª resposta do post: ", response);
+        return response.json();
       })
-      .catch(err => console.log(err));
+      .then(response => {
+        console.log("2ª resposta do post: ", response);
+
+        if (response.error) {
+          console.log("erro no post: ", response.error);
+        }
+
+        this.calculateFaceLocation(response);
+
+        fetch(`${base_url}/image`, {
+          method: "put",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: this.state.user.id
+          })
+        })
+          .then(response => {
+            console.log("1ª resposta do PUT: ", response);
+            return response.json();
+          })
+          .then(response => {
+            console.log("2ª resposta do PUT ", response);
+
+            if (response.error) {
+              console.log("erro no PUT: ", response.error);
+            }
+
+            this.setState({ user: { ...this.state.user, entries: response } });
+
+            this.saveUser();
+          })
+          .catch(err => {
+            this.setState({ error: true });
+            console.log("erro setado pelo PUT");
+          });
+      })
+      .catch(err => {
+        this.setState({ error: true });
+        console.log("erro setado pelo POST");
+      });
   };
 
   // função para mudar de rota
   onRouteChange = route => {
-    route === "home"
-      ? this.setState({ isSignedIn: true })
-      : this.setState(initialState);
+    if (route !== "home") {
+      this.setState(initialState);
+      localStorage.clear("user");
+      console.log("Limpando storage");
+    }
+
     this.setState({ route: route });
   };
 
   render() {
-    const { isSignedIn, imageUrl, route, boxes } = this.state;
+    const { route } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesConfig} />
-        <Navigation
-          isSignedIn={isSignedIn}
-          onRouteChange={this.onRouteChange}
-        />
+        <Navigation route={route} onRouteChange={this.onRouteChange} />
         {route === "signin" ? (
           <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         ) : route === "register" ? (
@@ -151,7 +202,11 @@ export class App extends Component {
               onInputChange={this.onInputChange}
               onBtnSubmit={this.onSubmit}
             />
-            <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
+            <FaceRecognition
+              boxes={this.state.boxes}
+              imageUrl={this.state.imageUrl}
+              error={this.state.error}
+            />
           </div>
         )}
       </div>

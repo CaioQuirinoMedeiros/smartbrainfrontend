@@ -1,9 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #000;
@@ -20,6 +25,26 @@ body {
 }
 
 /******************** REUSABLE ********************/
+.active {
+  display: inline-block !important;
+}
+
+.tip {
+  padding: 3px 0;
+  font-size: 80%;
+  text-align: left;
+}
+
+.valid {
+  box-shadow: inset 0px 0px 35px -20px rgb(81, 255, 0);
+}
+.invalid {
+  box-shadow: inset 0px 0px 35px -20px rgba(255, 0, 0, 1);
+}
+.blocked {
+  cursor: not-allowed !important;
+}
+
 .wrapper {
   width: 100%;
   display: inherit;
@@ -27,8 +52,46 @@ body {
   align-items: inherit;
 }
 
+.error {
+  display: none;
+  color: red;
+  font-weight: bolder;
+  font-size: 220%;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%)
+}
+
+.lds-dual-ring {
+  display: none;
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  right: 10px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 26px;
+  height: 26px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: #dd8800 transparent #dd8800 transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 button {
-  outline: none
+  outline: none;
 }
 
 /******************** PARTICLES ********************/
@@ -49,35 +112,36 @@ button {
   align-items: center;
   justify-content: space-between;
 }
-  .logo_box {
-    margin: 10px 0 10px 20px;
-  }
-    .logo_box img {
-      width: 60px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .rotate {
-      transform: rotate(360deg);
-    }
-  .nav_nav {
-    margin-right: 20px;
-  }
-    .nav_list {
-      list-style: none;
-      display: flex;
-    }
-      .nav_list li {
-        padding: 0 15px;
-      }
-        .nav_list li span {
-          cursor: pointer;
-          font-size: 120%;
-          font-weight: 400;
-        }
+.logo_box {
+  margin: 10px 0 10px 20px;
+}
+.logo_box img {
+  width: 60px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.rotate {
+  transform: rotate(360deg);
+}
+.nav_nav {
+  margin-right: 20px;
+}
+.nav_list {
+  list-style: none;
+  display: flex;
+}
+.nav_list li {
+  padding: 0 15px;
+}
+.nav_list li span {
+  cursor: pointer;
+  font-size: 120%;
+  font-weight: 400;
+}
 
 /******************** HOME FORM ********************/
 .input_box {
+  width: 95%;
   background: rgba(240, 240, 240, 0.95);
   color: #222;
   border-radius: 5px;
@@ -85,46 +149,56 @@ button {
   margin: 30px 10px;
   box-shadow: 2px 2px 15px 2px #000;
 }
-  .input_box p {
-    font-size: 140%;
-    padding: 5px 15px;
-  }
-  .input_wrapper {
-    margin: 20px 0;
-    display: flex;
-    justify-content: space-evenly
-  }
-    .input_text {
-      outline: none;
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      width: 50%
-    }
-    .input_button {
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      background-color: #DD8800;
-      color: #fff;
-      cursor: pointer;
-      font-size: 100%;
-      text-transform: uppercase;
-    }
+.input_box p {
+  font-size: 140%;
+  padding: 15px 15px 5px 15px;
+}
+.input_wrapper {
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.input_text {
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  flex: 1;
+}
+.input_button {
+  border: none;
+  margin: 0 10px;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #dd8800;
+  color: #fff;
+  cursor: pointer;
+  font-size: 90%;
+  font-weight: 400;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.input_button:hover {
+  background-color: #b4740c;
+}
 
 /******************** FACE RECOGNITION IMG ********************/
 .face-recognition {
   width: 100%;
   text-align: center;
 }
-  .face_box {
-    margin-top: 30px;
-    position: relative;
-    display: inline-block;
-  }
-    .face_box img {
-      width: 200px;
-    }
+.face_box {
+  position: relative;
+  display: inline-block;
+}
+.face_box img {
+  width: 200px;
+}
+
+.face_box .errorWarning {
+  color: #fff;
+}
 
 .bounding-box {
   position: absolute;
@@ -146,52 +220,91 @@ button {
   align-items: center;
   margin: 30px 0;
 }
-  .form_legend {
-    font-size: 180%;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 30px;
-  }
-  .input-signin_wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 5px;
-  }
-    .input-signin_wrapper label {
-      text-align: left;
-      margin-bottom: 5px;
-    }
-    .input-signin_wrapper input {
-      border: none;
-      outline: none;
-      border-radius: 5px;
-      padding: 10px;
-      font-size: 100%;
-    }
-    .input-signin_wrapper input[type='submit'] {
-      cursor: pointer;
-      background-color: #ee8800;
-      color: #fff;
-      width: 40%;
-      margin: 0 auto;
-      transition: all 0.3s;
-    }
-    .input-signin_wrapper input[type='submit']:hover {
-      transform: scale(1.05);
-    }
-    .input-signin_wrapper span {
-      cursor: pointer;
-      color: #ee8800;
-    }
+.form_legend {
+  font-size: 180%;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+.input-signin_wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 5px;
+}
+.input-signin_wrapper label {
+  text-align: left;
+  margin-bottom: 5px;
+}
+.input-signin_wrapper input {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 100%;
+}
+.input-signin_wrapper input[type="submit"] {
+  cursor: pointer;
+  background-color: #ee8800;
+  color: #fff;
+  width: 40%;
+  margin: 0 auto;
+  transition: all 0.3s;
+}
+.input-signin_wrapper input[type="submit"]:hover {
+  transform: scale(1.05);
+}
+.input-signin_wrapper span {
+  cursor: pointer;
+  color: #ee8800;
+}
+
+.errorLogin {
+  color: #fff;
+  font-weight: 400;
+}
+
+/******************** RANK ********************/
 
 .rank {
-  margin-top: 20px;
+  padding: 20px 10px 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
-  .rank_text {
-    color: #fff;
-    font-size: 150%;
-  }
-  .rank_num {
+.rank_text {
+  color: #fff;
+  font-size: 200%;
+}
+.rank_num {
+  color: #fff;
+  padding: 10px;
+  font-weight: 400;
+}
 
+
+@media only screen and (max-width: 540px) {
+  .input_box {
+    width: 95%;
   }
+  .input_box p {
+  }
+  .input_wrapper {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 10px;
+  }
+  .input_wrapper * {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+.apiError {
+  padding: 15px 0;
+}
