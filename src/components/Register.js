@@ -25,8 +25,9 @@ class Register extends React.Component {
     const { name, email, password } = this.state;
     const { loadUser } = this.props;
 
-    if (!name.lenght || !email.lenght || !password.length) {
+    if (!name.length || !email.length || !password.length) {
       this.setState({ error: "Preencha os campos corretamente" });
+      alert("ops");
     }
 
     try {
@@ -53,7 +54,7 @@ class Register extends React.Component {
             <label htmlFor="name">Nome</label>
             <input
               value={name}
-              onChange={this.onNameChange}
+              onChange={this.onInputChange}
               type="text"
               name="name"
               id="name"
@@ -64,7 +65,7 @@ class Register extends React.Component {
             <label htmlFor="email">Email</label>
             <input
               value={email}
-              onChange={this.onEmailChange}
+              onChange={this.onInputChange}
               type="email"
               name="email"
               id="email"
@@ -75,7 +76,7 @@ class Register extends React.Component {
             <label htmlFor="password">Senha</label>
             <input
               value={password}
-              onChange={this.onPasswordChange}
+              onChange={this.onInputChange}
               type="password"
               name="password"
               id="password"
