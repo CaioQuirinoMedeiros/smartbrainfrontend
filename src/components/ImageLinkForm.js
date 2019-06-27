@@ -1,20 +1,21 @@
 import React from "react";
 
-const ImageLinkForm = ({ onBtnClear, onInputChange, onBtnSubmit }) => {
+const ImageLinkForm = ({ onBtnClear, onInputChange, onBtnSubmit, value }) => {
   return (
     <section className="input_box">
-      <p>Paste an image address to detect faces in it!</p>
+      <p>Digite o endereço de uma imagem para encontrar os rostos!</p>
       <form onSubmit={onBtnSubmit} className="input_wrapper">
         <div className="input_button" onClick={onBtnClear}>
-          Clear
+          Limpar
         </div>
         <input
+          value={value}
           className="input_text"
           type="text"
           placeholder="URL"
           onChange={onInputChange}
         />
-        <input className="input_button" type="submit" value="Detect" />
+        <input className="input_button" type="submit" value="Enviar" />
       </form>
     </section>
   );

@@ -1,106 +1,61 @@
 import React from "react";
-import { base_url } from "../config/baseUrl";
+import api from "../config/api";
 
 class Register extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {
-      name: "",
-      email: "",
-      password: "",
-      validEmail: false,
-      validPassword: false,
+  state = {
+    name: "",
+    email: "",
+    password: "",
+    loading: "",
+    error: ""
+  };
+
+  onInputChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value,
       error: ""
-    };
-  }
-
-  validateEmail = email => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+    });
   };
 
-  validatePassword = pass => {
-    const regexPass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return regexPass.test(String(pass));
-  };
-
-  validateRegister = () =>
-    !(this.state.validEmail && this.state.validPassword && this.state.name);
-
-  onNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
-
-  onEmailChange = async event => {
-    await this.setState({ email: event.target.value, error: "" });
-
-    this.validateEmail(this.state.email)
-      ? this.setState({ validEmail: true })
-      : this.setState({ validEmail: false });
-  };
-
-  onPasswordChange = async event => {
-    await this.setState({ password: event.target.value, error: "" });
-
-    this.validatePassword(this.state.password)
-      ? this.setState({ validPassword: true })
-      : this.setState({ validPassword: false });
-  };
-
-  onSubmitRegister = e => {
+  onSubmitRegister = async e => {
     e.preventDefault();
-    if (this.validateRegister()) return;
 
-    fetch(`${base_url}/register`, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-        name: this.state.name
-      })
-    })
-      .then(response => response.json())
-      .then(user => {
-        if (user.id) {
-          this.props.onRouteChange("home");
-          this.props.loadUser(user);
-        } else if (user.error) {
-          this.setState({ error: user.error });
-        }
-      })
-      .catch(error => {
-        this.setState({ error: "Register failed" });
-      });
+    this.setState({ loading: "active", error: "" });
+
+    const { name, email, password } = this.state;
+    const { loadUser } = this.props;
+
+    if (!name.lenght || !email.lenght || !password.length) {
+      this.setState({ error: "Preencha os campos corretamente" });
+    }
+
+    try {
+      const response = await api.post("register", { name, email, password });
+
+      loadUser(response.data);
+    } catch (err) {
+      this.setState({ error: "Erro ao registrar usuário" });
+    } finally {
+      this.setState({ loading: "" });
+    }
   };
 
   render() {
     const { onRouteChange } = this.props;
+    const { name, email, password, error, loading } = this.state;
 
-    const validEmail = !this.state.email
-      ? ""
-      : this.state.validEmail
-      ? "valid"
-      : "invalid";
-
-    const validPassword = !this.state.password
-      ? ""
-      : this.state.validPassword
-      ? "valid"
-      : "invalid";
-
-    const validRegister = this.validateRegister() ? "blocked" : "";
-
+    const errorActive = !!error ? "active" : "";
     return (
       <React.Fragment>
         <form onSubmit={this.onSubmitRegister} className="form_signin">
-          <legend className="form_legend">Register</legend>
+          <legend className="form_legend">Criar conta</legend>
           <div className="input-signin_wrapper">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Nome</label>
             <input
+              value={name}
+              onChange={this.onNameChange}
               type="text"
               name="name"
-              onChange={this.onNameChange}
               id="name"
               required
             />
@@ -108,36 +63,37 @@ class Register extends React.Component {
           <div className="input-signin_wrapper">
             <label htmlFor="email">Email</label>
             <input
-              className={validEmail}
+              value={email}
+              onChange={this.onEmailChange}
               type="email"
               name="email"
-              onChange={this.onEmailChange}
               id="email"
               required
             />
           </div>
           <div className="input-signin_wrapper">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
-              className={validPassword}
+              value={password}
+              onChange={this.onPasswordChange}
               type="password"
               name="password"
-              onChange={this.onPasswordChange}
               id="password"
               required
             />
-            <p className="tip">
-              minimum eight characters, at least one letter and one number
-            </p>
           </div>
           <div className="input-signin_wrapper">
-            <input className={validRegister} type="submit" value="Register" />
+            <input type="submit" value="Cadastrar" />
+            <div className={`lds-dual-ring ${loading}`} />
+            <div className={`error ${errorActive}`}>X</div>
           </div>
           <div className="input-signin_wrapper">
-            <span onClick={() => onRouteChange("signin")}>Sign in</span>
+            <span onClick={() => onRouteChange("signin")}>
+              Já tenho uma conta
+            </span>
           </div>
         </form>
-        <h4 className="errorLogin">{this.state.error}</h4>
+        <h4 className="errorLogin">{error}</h4>
       </React.Fragment>
     );
   }

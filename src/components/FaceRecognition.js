@@ -1,8 +1,8 @@
 import React from "react";
 
 const FaceRecognition = ({ imageUrl, boxes, error }) => {
-  const faceBoxes = error ? (
-    <h3 className="errorLogin apiError">Something went wrong :(</h3>
+  const faceBoxes = !!error ? (
+    <h3 className="errorLogin apiError">{error}</h3>
   ) : (
     boxes.map(box => {
       return (

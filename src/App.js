@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import api from "./config/api";
+
 import Navigation from "./components/Navigation";
 import Signin from "./components/Signin";
 import Register from "./components/Register";
@@ -7,68 +9,52 @@ import ImageLinkForm from "./components/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition";
 import Particles from "react-particles-js";
 import { particlesConfig } from "./particlesjs-config";
-import { base_url } from "./config/baseUrl";
 
 const initialState = {
-  error: false,
+  error: "",
   inputUrl: "",
   imageUrl: "",
   boxes: [],
   route: "signin",
   user: {
-    id: "",
-    name: "",
-    email: "",
-    entries: 0,
-    joined: ""
+    id: null,
+    name: null,
+    email: null,
+    entries: null,
+    joined: null
   }
 };
 
 export class App extends Component {
-  constructor() {
-    super();
-    this.state = initialState;
-  }
+  state = initialState;
 
   componentDidMount = () => {
-    const storage = localStorage.getItem("user");
-    console.log("Storage no compMount: ", storage);
+    const storage = localStorage.getItem("@smart_brain:user");
 
     if (storage) {
       this.loadUser(JSON.parse(storage));
-      console.log("Chamando loadUser passando a data: ", storage);
     }
   };
 
-  loadUser = async userData => {
-    console.log("loadUser iniciando recebendo a data: ", userData);
-    await this.setState({
-      route: "home",
-      user: {
-        id: userData.id,
-        name: userData.name,
-        email: userData.email,
-        entries: userData.entries,
-        joined: userData.joined
+  loadUser = async user => {
+    this.setState(
+      {
+        route: "home",
+        user: { ...user }
+      },
+      () => {
+        this.saveUser();
       }
-    });
-    console.log("State after set state do loadUser: ", this.state.user);
-
-    this.saveUser();
+    );
   };
 
   saveUser = () => {
-    localStorage.setItem("user", JSON.stringify(this.state.user));
-    console.log("Salvando no storage o user: ", this.state.user);
+    localStorage.setItem("@smart_brain:user", JSON.stringify(this.state.user));
   };
 
-  calculateFaceLocation = data => {
-    // regioes encontradas pela API
-    const regions = data.outputs[0].data.regions;
-
-    // array das faces localizadas
-    const clarifaiFaces = regions.map(reg => {
-      return reg.region_info.bounding_box;
+  calculateFaceLocation = regions => {
+    const faces = regions.map(region => {
+      return region.region_info.bounding_box;
     });
 
     // buscando o tamanho da imagem
@@ -77,7 +63,7 @@ export class App extends Component {
     const height = Number(inputImg.height);
 
     // definindo as posições das faces
-    const boxes = clarifaiFaces.map(face => {
+    const boxes = faces.map(face => {
       return {
         top: height * face.top_row,
         right: width * (1 - face.right_col),
@@ -86,104 +72,65 @@ export class App extends Component {
       };
     });
 
-    this.setState({ boxes: boxes });
+    this.setState({ boxes });
   };
 
-  onBtnClear = e => {
-    document.querySelector(".input_text").value = "";
-    this.setState({ inputUrl: "", imageUrl: "", boxes: [], error: false });
+  onBtnClear = () => {
+    // document.querySelector(".input_text").value = "";
+    this.setState({ inputUrl: "", error: "" });
   };
 
   onInputChange = event => {
     this.setState({
       inputUrl: event.target.value,
-      imageUrl: event.target.value,
-      boxes: [],
-      error: false
+      error: ""
     });
   };
 
   onSubmit = async e => {
     e.preventDefault();
 
-    if (!this.state.inputUrl) {
-      return;
-    }
+    await this.setState({ imageUrl: this.state.inputUrl, boxes: [] });
 
-    this.setState({ error: false });
-
-    //  chamando a promise da api com o modelo de detecção de face
-    console.log(this.state.imageUrl);
-    fetch(`${base_url}/image`, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        input: this.state.inputUrl
-      })
-    })
-      .then(response => {
-        console.log("1ª resposta do post: ", response);
-        return response.json();
-      })
-      .then(response => {
-        console.log("2ª resposta do post: ", response);
-
-        if (response.error) {
-          console.log("erro no post: ", response.error);
-        }
-
-        this.calculateFaceLocation(response);
-
-        fetch(`${base_url}/image`, {
-          method: "put",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: this.state.user.id
-          })
-        })
-          .then(response => {
-            console.log("1ª resposta do PUT: ", response);
-            return response.json();
-          })
-          .then(response => {
-            console.log("2ª resposta do PUT ", response);
-
-            if (response.error) {
-              console.log("erro no PUT: ", response.error);
-            }
-
-            this.setState({ user: { ...this.state.user, entries: response } });
-
-            this.saveUser();
-          })
-          .catch(err => {
-            this.setState({ error: true });
-            console.log("erro setado pelo PUT");
-          });
-      })
-      .catch(err => {
-        this.setState({ error: true });
-        console.log("erro setado pelo POST");
+    try {
+      const response = await api.post("image", {
+        input: this.state.inputUrl,
+        id: this.state.user.id
       });
+
+      this.calculateFaceLocation(response.data.regions);
+      this.setState(
+        {
+          user: {
+            ...this.state.user,
+            entries: response.data.entries
+          }
+        },
+        () => this.saveUser()
+      );
+    } catch (err) {
+      this.setState({ error: "Erro ao processar imagem" });
+    }
   };
 
-  // função para mudar de rota
   onRouteChange = route => {
     if (route !== "home") {
       this.setState(initialState);
-      localStorage.clear("user");
-      console.log("Limpando storage");
+      localStorage.clear("@smart_brain:user");
     }
 
-    this.setState({ route: route });
+    this.setState({ route });
   };
 
   render() {
-    const { route } = this.state;
+    console.log(this.state);
+    const { route, user, inputUrl, imageUrl, boxes, error } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesConfig} />
+
         <Navigation route={route} onRouteChange={this.onRouteChange} />
+
         {route === "signin" ? (
           <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         ) : route === "register" ? (
@@ -193,20 +140,14 @@ export class App extends Component {
           />
         ) : (
           <div className="wrapper">
-            <Rank
-              name={this.state.user.name}
-              entries={this.state.user.entries}
-            />
+            <Rank name={user.name} entries={user.entries} />
             <ImageLinkForm
+              value={inputUrl}
               onBtnClear={this.onBtnClear}
               onInputChange={this.onInputChange}
               onBtnSubmit={this.onSubmit}
             />
-            <FaceRecognition
-              boxes={this.state.boxes}
-              imageUrl={this.state.imageUrl}
-              error={this.state.error}
-            />
+            <FaceRecognition boxes={boxes} imageUrl={imageUrl} error={error} />
           </div>
         )}
       </div>

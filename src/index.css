@@ -29,12 +29,6 @@ body {
   display: inline-block !important;
 }
 
-.tip {
-  padding: 3px 0;
-  font-size: 80%;
-  text-align: left;
-}
-
 .valid {
   box-shadow: inset 0px 0px 35px -20px rgb(81, 255, 0);
 }
@@ -60,7 +54,7 @@ body {
   position: absolute;
   right: 10px;
   top: 50%;
-  transform: translateY(-50%)
+  transform: translateY(-50%);
 }
 
 .lds-dual-ring {
@@ -283,7 +277,6 @@ button {
   padding: 10px;
   font-weight: 400;
 }
-
 
 @media only screen and (max-width: 540px) {
   .input_box {

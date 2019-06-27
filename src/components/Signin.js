@@ -1,77 +1,59 @@
 import React from "react";
-import { base_url } from "../config/baseUrl";
+import api from "../config/api";
 
 class Signin extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      signInEmail: "",
-      signInPassword: "",
-      isLoading: false,
-      loginFailed: false,
-      error: ""
-    };
-  }
+  state = {
+    email: "",
+    password: "",
+    loading: "",
+    error: ""
+  };
 
-  onEmailChange = event => {
+  onInputChange = event => {
     this.setState({
-      signInEmail: event.target.value,
-      loginFailed: false,
+      [event.target.name]: event.target.value,
       error: ""
     });
   };
 
-  onPasswordChange = event => {
-    this.setState({
-      signInPassword: event.target.value,
-      loginFailed: false,
-      error: ""
-    });
-  };
-
-  onSubmitSignIn = e => {
+  onSubmitSignIn = async e => {
     e.preventDefault();
-    if (this.state.signInEmail === "" || this.state.signInPassword === "")
+
+    this.setState({ loading: "active", error: "" });
+
+    const { email, password } = this.state;
+    const { loadUser } = this.props;
+
+    if (!email.length || !password.length) {
+      this.setState({ error: "Preencha seu e-mail e senha" });
       return;
+    }
 
-    this.setState({ isLoading: true, loginFailed: false, error: "" });
+    try {
+      const response = await api.post("signin", { email, password });
 
-    fetch(`${base_url}/signin`, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: this.state.signInEmail,
-        password: this.state.signInPassword
-      })
-    })
-      .then(response => {
-        this.setState({ isLoading: false });
-        return response.json();
-      })
-      .then(user => {
-        if (user.id) {
-          this.props.loadUser(user);
-        } else if (user.error) {
-          this.setState({ loginFailed: true, error: user.error });
-        }
-      })
-      .catch(error => {
-        this.setState({ loginFailed: true, error: 'Login failed' });
-      });
+      loadUser(response.data);
+    } catch (err) {
+      this.setState({ error: "Credenciais inválidas" });
+    } finally {
+      this.setState({ loading: "" });
+    }
   };
 
   render() {
     const { onRouteChange } = this.props;
-    const loadingActive = this.state.isLoading ? "active" : "";
-    const errorActive = this.state.loginFailed ? "active" : "";
+    const { email, password, error, loading } = this.state;
+
+    const errorActive = !!error ? "active" : "";
     return (
       <React.Fragment>
         <form onSubmit={this.onSubmitSignIn} className="form_signin">
-          <legend className="form_legend">Sign In</legend>
+          <legend className="form_legend">Entrar</legend>
           <div className="input-signin_wrapper">
             <label htmlFor="email">Email</label>
             <input
-              onChange={this.onEmailChange}
+              value={email}
+              onChange={this.onInputChange}
               type="email"
               name="email"
               id="email"
@@ -79,9 +61,10 @@ class Signin extends React.Component {
             />
           </div>
           <div className="input-signin_wrapper">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
-              onChange={this.onPasswordChange}
+              value={password}
+              onChange={this.onInputChange}
               type="password"
               name="password"
               id="password"
@@ -90,15 +73,15 @@ class Signin extends React.Component {
           </div>
           <div className="input-signin_wrapper" />
           <div className="input-signin_wrapper">
-            <input type="submit" value="Sign in" />
-            <div className={`lds-dual-ring ${loadingActive}`} />
+            <input type="submit" value="Login" />
+            <div className={`lds-dual-ring ${loading}`} />
             <div className={`error ${errorActive}`}>X</div>
           </div>
           <div className="input-signin_wrapper">
-            <span onClick={() => onRouteChange("register")}>Register</span>
+            <span onClick={() => onRouteChange("register")}>Criar conta</span>
           </div>
         </form>
-        <h4 className="errorLogin">{this.state.error}</h4>
+        <h4 className="errorLogin">{error}</h4>
       </React.Fragment>
     );
   }

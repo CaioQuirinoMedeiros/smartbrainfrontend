@@ -6,16 +6,16 @@ const Navigation = ({ onRouteChange, route }) => {
     route === "home" ? (
       <ul className="nav_list">
         <li>
-          <span onClick={() => onRouteChange("signin")}>Logout</span>
+          <span onClick={() => onRouteChange("signin")}>Sair</span>
         </li>
       </ul>
     ) : (
       <ul className="nav_list">
         <li>
-          <span onClick={() => onRouteChange("signin")}>Sign in</span>
+          <span onClick={() => onRouteChange("signin")}>Entrar</span>
         </li>
         <li>
-          <span onClick={() => onRouteChange("register")}>Register</span>
+          <span onClick={() => onRouteChange("register")}>Cadastro</span>
         </li>
       </ul>
     );
