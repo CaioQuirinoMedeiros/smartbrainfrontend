@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/smartbrain_web/static/media/brain-solid.a6e129df.svg"
   },
   {
-    "revision": "c22e696df2ccba8755a71a6a6ff184b2",
+    "revision": "a8a289a6c36475124076e0a861f9b7a0",
     "url": "/smartbrain_web/index.html"
   }
 ];
