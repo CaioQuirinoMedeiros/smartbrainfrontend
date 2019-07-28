@@ -123,7 +123,6 @@ export class App extends Component {
   };
 
   render() {
-    console.log(this.state);
     const { route, user, inputUrl, imageUrl, boxes, error } = this.state;
     return (
       <div className="App">
