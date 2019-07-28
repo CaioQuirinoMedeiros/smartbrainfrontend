@@ -2,10 +2,13 @@
   "name": "face_recognition",
   "version": "0.1.0",
   "private": true,
+  "author": "Caio Quirino",
+  "homepage": "https://caioquirinomedeiros.github.io/smartbrain_web",
   "dependencies": {
     "ajv": "^6.8.1",
     "axios": "^0.18.0",
     "dotenv": "^8.0.0",
+    "gh-pages": "^2.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-id-generator": "^0.1.6",
@@ -16,7 +19,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
