@@ -6,7 +6,7 @@
   "homepage": "https://caioquirinomedeiros.github.io/smartbrain_web",
   "dependencies": {
     "ajv": "^6.8.1",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "dotenv": "^8.0.0",
     "gh-pages": "^2.0.1",
     "react": "^16.8.6",
